@@ -51,6 +51,15 @@ Chat language. **`{YOUR LANGUAGE}` is a placeholder** — before you use this te
 ```
 Code, identifiers, commits, PR descriptions, docs — English by default. Standard practice, but the **explicit user override** (`unless the user explicitly asks otherwise`) matters: otherwise the rule forces English README text for your own non-English repo even when you explicitly asked for another language.
 
+There is a research-backed reason beyond convention. No single study cites a clean "non-English comments cost X% accuracy" number, but several independent lines of evidence point in the same direction:
+
+- LLMs internally translate multilingual inputs to English representations before reasoning; errors in that translation propagate into the output ("translation barrier"). See [Lost in the Mix (2506.14012)](https://arxiv.org/html/2506.14012v1), [Evaluating Multilingual and Code-Switched Alignment (2508.14735)](https://arxiv.org/pdf/2508.14735).
+- Mixing languages within a single context (English code + non-English comments = exactly this) is a code-switching scenario, where LLMs measurably lose accuracy and existing models still handle it poorly. See [Multilingual LLMs Are Not (Yet) Code-Switchers (EMNLP 2023)](https://aclanthology.org/2023.emnlp-main.774.pdf).
+- Identifier surface form matters a lot on its own: adversarial renaming alone drops GPT-4o Pass@1 from 76.6 to 70.2 and DeepSeek V3 from 90.0 to 69.3 — models lean heavily on natural-language cues in names, and transliterated or calqued non-English identifiers carry weaker cues than conventional English ones. See [When Names Disappear (2510.03178)](https://arxiv.org/html/2510.03178v1).
+- For non-English code comments specifically, a five-model × five-language study (12,500 labeled generations) found systematically more partially-correct and error-prone comments outside English, with a 26-category error taxonomy. See [A Qualitative Investigation into LLM-Generated Multilingual Code Comments (2505.15469)](https://arxiv.org/abs/2505.15469).
+
+Effect size is small for high-resource languages (Russian, German, French, Japanese, Chinese) and larger for low-resource ones. For mixed-language codebases — English code + non-English comments/identifiers — the code-switching effect stacks on top. Keeping code artifacts in English is a cheap hedge against several independent failure modes at once, not a cited-number rule.
+
 #### `## Communication`
 
 ```
@@ -257,6 +266,15 @@ Claude Code читает `CLAUDE.md` двух уровней:
   explicitly asks otherwise.
 ```
 Код, идентификаторы, коммиты, PR-описания, docs — английский по умолчанию. Это общепринятая практика, но важно добавить **явный user override** (`unless the user explicitly asks otherwise`), иначе правило обязывает писать README для личного русскоязычного репо по-английски даже когда вы просите иначе.
+
+Помимо конвенции, у правила есть research-обоснование. Прямого бенчмарка вида «non-English комментарии стоят X% accuracy» не существует, но несколько независимых линий evidence сходятся в одну сторону:
+
+- LLM внутренне репрезентируют мультиязычный вход через английский перед тем, как рассуждать; сбои на этом этапе транслируются в ответ («translation barrier»). См. [Lost in the Mix (2506.14012)](https://arxiv.org/html/2506.14012v1), [Evaluating Multilingual and Code-Switched Alignment (2508.14735)](https://arxiv.org/pdf/2508.14735).
+- Смешение языков внутри одного контекста (английский код + не-английские комментарии — ровно это) — это code-switching, на котором модели измеримо теряют точность и до сих пор работают плохо. См. [Multilingual LLMs Are Not (Yet) Code-Switchers, EMNLP 2023](https://aclanthology.org/2023.emnlp-main.774.pdf).
+- Surface form идентификаторов сам по себе сильно влияет: одно только adversarial переименование роняет Pass@1 у GPT-4o с 76.6 до 70.2, у DeepSeek V3 с 90.0 до 69.3. Модели сильно опираются на natural-language cues в именах; транслитерированные или калькированные не-английские идентификаторы несут более слабые cues, чем конвенциональные английские. См. [When Names Disappear (2510.03178)](https://arxiv.org/html/2510.03178v1).
+- Конкретно про комментарии: исследование на пяти моделях × пяти языках (12 500 размеченных генераций) обнаружило систематически больше «частично корректных» и ошибочных комментариев за пределами английского, с таксономией из 26 категорий ошибок. См. [A Qualitative Investigation into LLM-Generated Multilingual Code Comments (2505.15469)](https://arxiv.org/abs/2505.15469).
+
+Размер эффекта небольшой для высокоресурсных языков (русский, немецкий, французский, японский, китайский) и больше для низкоресурсных. Для смешанных кодбаз — английский код + не-английские комментарии/идентификаторы — эффект code-switching накладывается сверху. Держать code artifacts на английском — дешёвая страховка от нескольких независимых failure modes одновременно, а не cited-number правило.
 
 #### `## Communication`
 
