@@ -67,10 +67,14 @@ Effect size is small for high-resource languages (Russian, German, French, Japan
 ```
 Answer first, caveats after. Kills preamble patterns like "Before answering, it's important to note...".
 
+*Research: [Lost in the Middle (Liu et al., 2023)](https://arxiv.org/abs/2307.03172) finds a U-shaped position bias — content at the very beginning or end of a long context is recalled best, middle positions worst. An answer placed first claims the primacy slot; a three-sentence preamble forfeits it.*
+
 ```
 - Name trade-offs in one line each and pick a default.
 ```
 Not a lecture with three options for the user to choose from — `A vs B: A is cheaper, B is safer — taking B`. Forces a decision.
+
+*Research: [Sharma et al., 2023 (Anthropic, ICLR 2024)](https://arxiv.org/abs/2310.13548) shows RLHF-trained assistants systematically prefer responses that match perceived user views over more accurate ones — "sycophancy." Demanding a named default counters the default behavior of presenting options without committing.*
 
 ```
 - If unsure, say what would make you sure (file to read, command to run)
@@ -78,16 +82,22 @@ Not a lecture with three options for the user to choose from — `A vs B: A is c
 ```
 Instead of "maybe," "possibly" — a concrete path to certainty. Works in both interactive and autonomous modes: in autonomous mode, the agent goes and reads/runs on its own.
 
+*Research: [ReAct (Yao et al., ICLR 2023)](https://arxiv.org/abs/2210.03629) establishes that interleaving reasoning traces with environment-grounded actions (reads, tool calls) substantially outperforms pure-reasoning baselines on knowledge-intensive tasks. "What would make you sure" names the next grounding action instead of hedging.*
+
 ```
 - When an instruction is materially ambiguous, state the assumption
   you are acting on in one line, then continue.
 ```
 Declaring assumptions for *materially* ambiguous instructions. The word `materially` is important: it filters out micro-noise. `then continue` is equally important: this is NOT a blanket "stop and ask" — which paralyses autonomous agents.
 
+*Research: [Sharma et al., 2023](https://arxiv.org/abs/2310.13548) also documents assistants generating unnecessary clarifying questions on answerable queries. Surfacing the assumption and continuing avoids that sycophantic stall while preserving an audit trail the user can correct.*
+
 ```
 - No "As an AI..." preambles, no motivational closers, no emoji.
 ```
 Short list of concrete anti-patterns the model drifts into by default. Negative phrasing is shorter and more precise than its positive equivalent here.
+
+*Research: [Sharma et al., 2023](https://arxiv.org/abs/2310.13548) and [Discovering Language Model Behaviors with Model-Written Evaluations (Perez et al., 2022)](https://arxiv.org/abs/2212.09251) identify "As an AI…" disclaimers and affirming closers as learned RLHF artifacts — persona tics, not information.*
 
 #### `## Workflow`
 
@@ -97,17 +107,23 @@ Verify against an explicit success criterion.**
 ```
 Summary anchor. Three principles of the section in one dense line. `explicit`, not `clear`: the criterion must be *named*, not merely understood.
 
+*Research: same primacy effect from [Lost in the Middle (Liu et al., 2023)](https://arxiv.org/abs/2307.03172) — a bold single line at the top of a section is the strongest retention position within that section.*
+
 ```
 - Plan briefly before multi-file edits; skip the plan for single-file
   or trivial changes.
 ```
 Plan only when planning pays for itself. A trivial single-file edit doesn't need a 3-step plan — that's pure overhead.
 
+*Research: [Chain-of-Thought (Wei et al., NeurIPS 2022)](https://arxiv.org/abs/2201.11903) and [Plan-and-Solve (Wang et al., ACL 2023)](https://arxiv.org/abs/2305.04091) show explicit decomposition improves multi-step reasoning. The same CoT paper reports gains are near-zero on trivial tasks and can actively hurt — hence "only when needed."*
+
 ```
 - Before a multi-step change, name the success criterion (test, command,
   or observable output) and iterate until it is met.
 ```
 The key line. The task is translated into a verifiable termination criterion *before* work starts. This isn't "goal-driven execution" as a decoration — it's what prevents the agent from either stopping early or drifting into over-engineering.
+
+*Research: [Let's Verify Step by Step (Lightman et al., OpenAI, 2023)](https://arxiv.org/abs/2305.20050) shows process supervision — verifying each intermediate step against an explicit criterion — substantially outperforms outcome-only supervision on MATH. A named success criterion is the agent-level analogue: a checkable signal at every step, not only at the end.*
 
 ```
 - Prefer running local read-only checks (tests, linters, type-checks, builds)
@@ -117,11 +133,15 @@ The key line. The task is translated into a verifiable termination criterion *be
 ```
 Autonomy in the safe zone, confirmation for side-effects. `Prefer running` rather than `Run` — to avoid forcing expensive read-only checks when they aren't warranted. The second half is hard: deploys/migrations/force-push without confirmation, never.
 
+*Research: [ReAct (Yao et al., ICLR 2023)](https://arxiv.org/abs/2210.03629) — reasoning grounded in real environment signals (type-check output, test results) beats reasoning against asked-for user claims. The side-effect boundary is supported by the agent-safety findings cited below on Red Lines.*
+
 ```
 - Prefer the minimal diff. Unrelated issues go in a list at the end,
   not into the diff.
 ```
 Diff size discipline. Everything "while I'm here" goes into a postscript to the response, not into the code.
+
+*Research: [Lost in the Middle (Liu et al., 2023)](https://arxiv.org/abs/2307.03172) — review-relevance is a long-context attention problem: every unrelated hunk dilutes attention over the hunks that matter. Smaller diffs are not just ergonomic for humans; they are easier for the reviewer model to attend to correctly.*
 
 ```
 - Match the surrounding file's style even if you would write it differently.
@@ -129,11 +149,15 @@ Diff size discipline. Everything "while I'm here" goes into a postscript to the 
 ```
 Style discipline. Agents commonly violate this: they make a technically correct but culturally foreign edit. This rule is separated from "minimal diff" because these are two different cognitive questions: *what* to change vs *how* to change it.
 
+*Research: [In-context learning (Brown et al., NeurIPS 2020, GPT-3)](https://arxiv.org/abs/2005.14165) — LLMs complete patterns from surrounding context. A style-inconsistent edit breaks the local pattern and makes the next completion from the same file less predictable.*
+
 ```
 - Avoid abstractions for single-use code and avoid speculative flexibility
   that was not requested.
 ```
 Anti-over-engineering. Three similar lines beat a premature abstraction. Configurability nobody asked for doesn't get built.
+
+*Research: classic engineering heuristics (YAGNI, rule of three); no single LLM-specific paper cited. The LLM angle is indirect — speculative abstractions consume tokens in the global context that could hold higher-value instructions, and they expand the surface the model must reason about on every subsequent edit.*
 
 ```
 - Fix root causes, not symptoms. Do not paper over errors with broad
@@ -142,15 +166,21 @@ Anti-over-engineering. Three similar lines beat a premature abstraction. Configu
 ```
 Root causes, not bypasses. The concrete list of anti-patterns (`broad try/except`, silent fallbacks, `--no-verify`) makes the rule actionable — without a list, the agent takes the path of least resistance anyway.
 
+*Research: [Shortcut Learning in Deep Neural Networks (Geirhos et al., Nature Machine Intelligence 2020)](https://www.nature.com/articles/s42256-020-00257-z) — neural networks systematically prefer surface-level shortcuts that satisfy the immediate signal without solving the underlying problem. `--no-verify`, broad `except`, and silent fallbacks are the prompt-level analogues. Named anti-patterns close specific shortcut surfaces.*
+
 #### `## Red Lines (always enforce, even when asked casually)`
 
 The section heading matters: "even when asked casually" covers the case where the user requests a destructive action offhand — the model must not read that as the guardrail being lifted.
+
+*Research: [Sharma et al., 2023](https://arxiv.org/abs/2310.13548) shows sycophantic compliance rises under casual, confident, or pressure-framed user requests. This clause explicitly removes that affordance on guardrails.*
 
 ```
 - Never use `git push --force` or `--force-with-lease` on `main`, `master`,
   release branches, or any protected branch.
 ```
 Absolute ban, not conditional. `Stop and confirm` is weaker here: in a long session, it degrades into "I asked once, I'm good." For non-protected branches, force-push remains allowed — rebase workflows are not affected.
+
+*Research: [AgentHarm (Andriushchenko et al., ICLR 2025)](https://arxiv.org/abs/2410.09024) and [Agent-SafetyBench (Zhang et al., 2024)](https://arxiv.org/abs/2412.14470) evaluate agent compliance on harmful or unsafe instructions; none of the 16 agents in the latter benchmark exceed a 60% safety rate. For worst-case-irreversible operations (force-push on main), absolute bans are the strongest known mitigation — conditional rules degrade across long sessions.*
 
 ```
 - Always treat `.env`, `credentials.json`, `*.key`, `*.pem`, and files
@@ -160,6 +190,8 @@ Absolute ban, not conditional. `Stop and confirm` is weaker here: in a long sess
 ```
 Secrets are protected not only against commit but also against **exfiltration** through seemingly harmless channels (reply output, logs, patches). Cheap but important reinforcement.
 
+*Research: [OWASP Top 10 for LLM Applications — LLM06: Sensitive Information Disclosure (2025)](https://genai.owasp.org/llmrisk/llm062025-sensitive-information-disclosure/) enumerates exfiltration channels independent of intentional commit: reply text, tool output, diff previews, log collection. Per-channel enumeration is needed because a single abstract "protect secrets" rule is trivially reinterpreted.*
+
 ```
 - Always ask for explicit confirmation before destructive operations:
   `rm -rf`, `git reset --hard`, `git clean -fd`, `git branch -D`,
@@ -167,12 +199,16 @@ Secrets are protected not only against commit but also against **exfiltration** 
 ```
 A concrete list of commands instead of abstract "destructive ops." The last sentence closes the most dangerous mode: rules still apply under `--dangerously-skip-permissions`.
 
+*Research: [OpenAgentSafety (Vijayvargiya et al., 2025)](https://arxiv.org/abs/2507.06134) finds agents execute unsafe actions in 51-72% of vulnerability-inducing tasks, most often when the request is casually framed or the user applies pressure. Enumerating the exact destructive verbs and explicitly binding the rule across permission modes is the strongest known mitigation.*
+
 ```
 - Before any git operation that may discard local changes, detect a dirty
   tree, warn clearly, and stop unless the user has explicitly approved how
   to preserve or discard the work.
 ```
 Dirty tree handling. Deliberately **without** auto-stash: automatically deciding for the user in a sensitive zone is more dangerous than stopping. `reset --hard`, `checkout -- .`, `stash drop`, branch-switch with a dirty tree — all covered.
+
+*Research: [Agent-SafetyBench (Zhang et al., 2024)](https://arxiv.org/abs/2412.14470) and [OpenAgentSafety (Vijayvargiya et al., 2025)](https://arxiv.org/abs/2507.06134) both find agents default to action under uncertainty rather than pausing. `detect-warn-stop` forces an explicit state check and removes the autonomy-by-default for work-destroying operations.*
 
 ### How to use
 
@@ -283,10 +319,14 @@ Claude Code читает `CLAUDE.md` двух уровней:
 ```
 Сначала ответ, потом оговорки. Убивает преамбулы и хедж-паттерны вида «Прежде чем отвечать, важно отметить...».
 
+*Research: [Lost in the Middle (Liu et al., 2023)](https://arxiv.org/abs/2307.03172) — U-образный bias позиции: контент в самом начале и в самом конце длинного контекста удерживается лучше всего, середина — хуже. Ответ первой строкой занимает primacy-слот; трёхстрочная преамбула его теряет.*
+
 ```
 - Name trade-offs in one line each and pick a default.
 ```
 Не лекция с тремя вариантами на выбор пользователю, а «A vs B: A дешевле, B надёжнее — беру B». Форсирует принятие решения.
+
+*Research: [Sharma et al., 2023 (Anthropic, ICLR 2024)](https://arxiv.org/abs/2310.13548) показывает, что RLHF-обученные ассистенты систематически выдают ответы, согласующиеся с предполагаемым взглядом пользователя, а не более точные — «sycophancy». Требование именованного default противоречит дефолтному поведению «предложить варианты, не коммитясь».*
 
 ```
 - If unsure, say what would make you sure (file to read, command to run)
@@ -294,16 +334,22 @@ Claude Code читает `CLAUDE.md` двух уровней:
 ```
 Вместо «возможно», «вероятно» — конкретный путь к уверенности. Работает и в интерактивных, и в автономных сценариях: в автоматическом режиме модель идёт и читает/запускает сама.
 
+*Research: [ReAct (Yao et al., ICLR 2023)](https://arxiv.org/abs/2210.03629) показывает, что чередование рассуждений с действиями в окружении (reads, tool calls) существенно сильнее чистого рассуждения на knowledge-intensive задачах. «What would make you sure» именует следующее grounding-действие вместо хеджа.*
+
 ```
 - When an instruction is materially ambiguous, state the assumption
   you are acting on in one line, then continue.
 ```
 Декларирование допущений при **материально** неоднозначных инструкциях. Слово `materially` важно: отсекает шум на микро-мелочах. `then continue` — столь же важно: это НЕ blanket «stop and ask», которое парализует автономного агента.
 
+*Research: [Sharma et al., 2023](https://arxiv.org/abs/2310.13548) также документирует, что ассистенты генерируют лишние уточняющие вопросы на вполне отвечаемых запросах. Озвучить допущение и продолжить — способ избежать этого «sycophantic stall», не теряя audit trail, который пользователь может поправить.*
+
 ```
 - No "As an AI..." preambles, no motivational closers, no emoji.
 ```
 Короткий список конкретных антипаттернов, которые модель любит по инерции. Запретная форма здесь короче и точнее позитивного эквивалента.
+
+*Research: [Sharma et al., 2023](https://arxiv.org/abs/2310.13548) и [Discovering Language Model Behaviors with Model-Written Evaluations (Perez et al., 2022)](https://arxiv.org/abs/2212.09251) идентифицируют «As an AI…»-дисклеймеры и motivational closers как выученные RLHF-артефакты — persona tics, а не информация.*
 
 #### `## Workflow`
 
@@ -313,17 +359,23 @@ Verify against an explicit success criterion.**
 ```
 Summary-якорь. Три принципа секции одной плотной строкой. `explicit`, а не `clear`: критерий должен быть **названным**, а не просто понятным.
 
+*Research: тот же primacy-эффект из [Lost in the Middle (Liu et al., 2023)](https://arxiv.org/abs/2307.03172) — жирная одна строка в начале секции занимает сильнейшую retention-позицию внутри этой секции.*
+
 ```
 - Plan briefly before multi-file edits; skip the plan for single-file
   or trivial changes.
 ```
 План только когда он окупается. Тривиальная однофайловая правка не требует трёх-пунктового плана — это лишний overhead.
 
+*Research: [Chain-of-Thought (Wei et al., NeurIPS 2022)](https://arxiv.org/abs/2201.11903) и [Plan-and-Solve (Wang et al., ACL 2023)](https://arxiv.org/abs/2305.04091) показывают, что явная декомпозиция улучшает многошаговое рассуждение. Но та же CoT-работа фиксирует около-нулевой выигрыш на тривиальных задачах и возможное ухудшение — отсюда «only when needed».*
+
 ```
 - Before a multi-step change, name the success criterion (test, command,
   or observable output) and iterate until it is met.
 ```
 Ключевая строка. Задача переводится в проверяемый критерий завершения до того, как начата работа. Это не «goal-driven execution» как декорация — это то, без чего агент не знает, когда остановиться.
+
+*Research: [Let's Verify Step by Step (Lightman et al., OpenAI, 2023)](https://arxiv.org/abs/2305.20050) показывает, что process supervision — верификация каждого промежуточного шага по явному критерию — существенно сильнее outcome-only supervision на MATH. Именованный success criterion — агентный аналог: проверяемый сигнал на каждом шаге, а не только в конце.*
 
 ```
 - Prefer running local read-only checks (tests, linters, type-checks, builds)
@@ -333,11 +385,15 @@ Summary-якорь. Три принципа секции одной плотно
 ```
 Автономия в безопасной зоне, подтверждение на side-effects. `Prefer running`, а не `Run`, — чтобы не заставлять агента прогонять дорогие проверки там, где это неуместно. Вторая половина — жёстко: deploys/migrations/force-push без подтверждения никогда.
 
+*Research: [ReAct (Yao et al., ICLR 2023)](https://arxiv.org/abs/2210.03629) — рассуждения, заземлённые на реальные сигналы окружения (type-check output, test results), сильнее рассуждений поверх утверждений пользователя. Граница side-effects обоснована через agent-safety исследования ниже в Red Lines.*
+
 ```
 - Prefer the minimal diff. Unrelated issues go in a list at the end,
   not into the diff.
 ```
 Дисциплина объёма диффа. Всё, что «раз уж я тут», — в постscriptum к ответу, не в код.
+
+*Research: [Lost in the Middle (Liu et al., 2023)](https://arxiv.org/abs/2307.03172) — review-релевантность это long-context attention problem: каждый посторонний hunk разбавляет внимание на тех hunk'ах, которые важны. Меньший дифф не только эргономичнее людям — он легче корректно attended-to reviewer-моделью.*
 
 ```
 - Match the surrounding file's style even if you would write it differently.
@@ -345,11 +401,15 @@ Summary-якорь. Три принципа секции одной плотно
 ```
 Дисциплина стиля. Агенты массово нарушают это: делают технически правильную правку, но культурно инородную. Правило разнесено от «minimal diff» потому, что это два разных когнитивных вопроса: «что менять» и «как менять».
 
+*Research: [In-context learning (Brown et al., NeurIPS 2020, GPT-3)](https://arxiv.org/abs/2005.14165) — LLM достраивают паттерны из окружающего контекста. Style-inconsistent правка ломает локальный паттерн и делает следующую правку из того же файла менее предсказуемой.*
+
 ```
 - Avoid abstractions for single-use code and avoid speculative flexibility
   that was not requested.
 ```
 Защита от over-engineering. Три похожие строки лучше преждевременной абстракции. Конфигурируемость, которую никто не просил, не строим.
+
+*Research: классические инженерные эвристики (YAGNI, rule of three); прямого LLM-исследования нет. LLM-специфический угол косвенный — спекулятивные абстракции расходуют токены глобального контекста, которые могли бы держать более ценные инструкции, и расширяют поверхность, через которую модель рассуждает при каждой следующей правке.*
 
 ```
 - Fix root causes, not symptoms. Do not paper over errors with broad
@@ -358,15 +418,21 @@ Summary-якорь. Три принципа секции одной плотно
 ```
 Корневые причины, а не обход. Конкретный список анти-паттернов (`broad try/except`, silent fallbacks, `--no-verify`) делает правило исполнимым: без списка агент всё равно пойдёт по пути наименьшего сопротивления.
 
+*Research: [Shortcut Learning in Deep Neural Networks (Geirhos et al., Nature Machine Intelligence 2020)](https://www.nature.com/articles/s42256-020-00257-z) — нейросети систематически предпочитают surface-level shortcuts, удовлетворяющие ближайший сигнал без решения корневой проблемы. `--no-verify`, широкий `except`, silent fallback — prompt-уровневые аналоги. Именованные антипаттерны закрывают конкретные shortcut-поверхности.*
+
 #### `## Red Lines (always enforce, even when asked casually)`
 
 Заголовок секции важен: «even when asked casually» закрывает случаи, когда пользователь просит destructive-действие мимоходом — модель не должна воспринимать это как снятие guardrail.
+
+*Research: [Sharma et al., 2023](https://arxiv.org/abs/2310.13548) показывает, что sycophantic compliance растёт при casual/confident/pressure-формулировках. Эта фраза явно убирает такой affordance с guardrails.*
 
 ```
 - Never use `git push --force` or `--force-with-lease` on `main`, `master`,
   release branches, or any protected branch.
 ```
 Абсолютный запрет, не условный. `Stop and confirm` здесь слабее: в длинной сессии деградирует до «я один раз спросил». Для non-protected веток force-push остаётся разрешённым — rebase-флоу не страдает.
+
+*Research: [AgentHarm (Andriushchenko et al., ICLR 2025)](https://arxiv.org/abs/2410.09024) и [Agent-SafetyBench (Zhang et al., 2024)](https://arxiv.org/abs/2412.14470) оценивают compliance агентов с вредоносными/небезопасными инструкциями; ни один из 16 агентов во втором бенчмарке не превышает 60% safety rate. Для worst-case-необратимых операций (force-push в main) абсолютные запреты — самая сильная из известных мер; условные правила деградируют на длинных сессиях.*
 
 ```
 - Always treat `.env`, `credentials.json`, `*.key`, `*.pem`, and files
@@ -376,6 +442,8 @@ Summary-якорь. Три принципа секции одной плотно
 ```
 Секреты защищены не только от коммита, но и от **эксфильтрации** через безобидные каналы (вывод в чат, логи, патчи). Это дешёвое, но важное усиление.
 
+*Research: [OWASP Top 10 for LLM Applications — LLM06: Sensitive Information Disclosure (2025)](https://genai.owasp.org/llmrisk/llm062025-sensitive-information-disclosure/) перечисляет каналы эксфильтрации, независимые от намеренного коммита: текст ответа, вывод инструментов, превью диффов, сбор логов. Перечисление per-channel необходимо, т.к. единое абстрактное «защити секреты» тривиально переинтерпретируется.*
+
 ```
 - Always ask for explicit confirmation before destructive operations:
   `rm -rf`, `git reset --hard`, `git clean -fd`, `git branch -D`,
@@ -383,12 +451,16 @@ Summary-якорь. Три принципа секции одной плотно
 ```
 Конкретный список команд вместо абстрактного «destructive». Последняя фраза закрывает самый опасный режим: в `--dangerously-skip-permissions` правила всё равно действуют.
 
+*Research: [OpenAgentSafety (Vijayvargiya et al., 2025)](https://arxiv.org/abs/2507.06134) — агенты исполняют небезопасные действия в 51-72% vulnerability-inducing задач, чаще всего при casual-формулировке или пользовательском давлении. Перечисление точных destructive-глаголов и явная привязка правила к permission-режимам — самая сильная из известных мер.*
+
 ```
 - Before any git operation that may discard local changes, detect a dirty
   tree, warn clearly, and stop unless the user has explicitly approved how
   to preserve or discard the work.
 ```
 Dirty tree. Намеренно **без** auto-stash: автоматическое принятие решения за пользователя в чувствительной зоне опаснее, чем остановка. `reset --hard`, `checkout -- .`, `stash drop`, branch-switch с грязным деревом — всё сюда.
+
+*Research: [Agent-SafetyBench (Zhang et al., 2024)](https://arxiv.org/abs/2412.14470) и [OpenAgentSafety (Vijayvargiya et al., 2025)](https://arxiv.org/abs/2507.06134) оба фиксируют: агенты default-но действуют при неопределённости, а не делают паузу. `detect-warn-stop` форсирует явную проверку состояния и убирает autonomy-by-default для work-destroying операций.*
 
 ### Как использовать
 
@@ -440,13 +512,42 @@ curl -o ~/.claude/CLAUDE.md \
 
 ## Sources / Источники
 
+**Documentation / Документация**
+
 - [How Claude remembers your project](https://docs.claude.com/en/docs/claude-code/memory) (Anthropic)
 - [Claude Code settings](https://docs.claude.com/en/docs/claude-code/settings) (Anthropic)
 - [Best Practices for Claude Code](https://www.anthropic.com/engineering/claude-code-best-practices) (Anthropic)
 - [Writing a good CLAUDE.md](https://humanlayer.dev/blog/claude-md-best-practices) (HumanLayer)
 - [CLAUDE.md: Best Practices Learned from Optimizing Claude Code with Prompt Learning](https://arize.com/blog/claude-md-best-practices/) (Arize)
 - [Feature Request: Persistent Memory Across Context Compactions](https://github.com/anthropics/claude-code/issues/34556) (claude-code#34556)
-- [PRISM: Position, Role, and Instruction Sensitivity Metric](https://arxiv.org/abs/2502.04794) (Hu et al., 2026)
+
+**Model behavior / Поведение моделей**
+
+- [Language Models are Few-Shot Learners (GPT-3)](https://arxiv.org/abs/2005.14165) — Brown et al., NeurIPS 2020. In-context learning.
+- [Chain-of-Thought Prompting Elicits Reasoning in Large Language Models](https://arxiv.org/abs/2201.11903) — Wei et al., NeurIPS 2022.
+- [Discovering Language Model Behaviors with Model-Written Evaluations](https://arxiv.org/abs/2212.09251) — Perez et al., 2022.
+- [ReAct: Synergizing Reasoning and Acting in Language Models](https://arxiv.org/abs/2210.03629) — Yao et al., ICLR 2023.
+- [Plan-and-Solve Prompting](https://arxiv.org/abs/2305.04091) — Wang et al., ACL 2023.
+- [Let's Verify Step by Step](https://arxiv.org/abs/2305.20050) — Lightman et al., OpenAI, 2023. Process supervision.
+- [Lost in the Middle: How Language Models Use Long Contexts](https://arxiv.org/abs/2307.03172) — Liu et al., TACL 2024. U-shaped position bias.
+- [Towards Understanding Sycophancy in Language Models](https://arxiv.org/abs/2310.13548) — Sharma et al., Anthropic, ICLR 2024.
+- [PRISM: Position, Role, and Instruction Sensitivity Metric](https://arxiv.org/abs/2502.04794) — Hu et al., 2026. Persona effects.
+- [Shortcut Learning in Deep Neural Networks](https://www.nature.com/articles/s42256-020-00257-z) — Geirhos et al., Nature Machine Intelligence 2020.
+
+**Agent safety / Безопасность агентов**
+
+- [OWASP Top 10 for LLM Applications — LLM06: Sensitive Information Disclosure (2025)](https://genai.owasp.org/llmrisk/llm062025-sensitive-information-disclosure/)
+- [AgentHarm: A Benchmark for Measuring Harmfulness of LLM Agents](https://arxiv.org/abs/2410.09024) — Andriushchenko et al., ICLR 2025.
+- [Agent-SafetyBench: Evaluating the Safety of LLM Agents](https://arxiv.org/abs/2412.14470) — Zhang et al., 2024.
+- [OpenAgentSafety: A Comprehensive Framework for Evaluating Real-World AI Agent Safety](https://arxiv.org/abs/2507.06134) — Vijayvargiya et al., 2025.
+
+**Language / Язык в коде**
+
+- [Lost in the Mix: How Context Language Affects LLM Reasoning](https://arxiv.org/html/2506.14012v1) — Translation barrier in multilingual inputs.
+- [Evaluating Multilingual and Code-Switched Alignment in LLMs](https://arxiv.org/pdf/2508.14735) — Code-switching alignment.
+- [Multilingual Large Language Models Are Not (Yet) Code-Switchers](https://aclanthology.org/2023.emnlp-main.774.pdf) — Zhang et al., EMNLP 2023.
+- [When Names Disappear: Revealing What LLMs Actually Understand About Code](https://arxiv.org/html/2510.03178v1) — Identifier surface-form sensitivity.
+- [A Qualitative Investigation into LLM-Generated Multilingual Code Comments](https://arxiv.org/abs/2505.15469) — Non-English comment quality, five-model × five-language study.
 
 ## License / Лицензия
 
