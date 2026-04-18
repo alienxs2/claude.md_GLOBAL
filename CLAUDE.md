@@ -1,6 +1,6 @@
 ## Language
 
-- Communicate with the user in Russian by default.
+- Communicate with the user in {YOUR LANGUAGE} by default.
 - All code artifacts, identifiers, comments, commit messages, PR text, and developer-facing documentation are in English unless the user explicitly asks otherwise.
 
 ## Communication
@@ -29,4 +29,3 @@
 - Always treat `.env`, `credentials.json`, `*.key`, `*.pem`, and files matching obvious secret patterns as non-committable. Do not print their contents to the reply, logs, or diffs. Warn loudly if such a file appears in the diff.
 - Always ask for explicit confirmation before destructive operations: `rm -rf`, `git reset --hard`, `git clean -fd`, `git branch -D`, `drop database`, `truncate`. Applies even in `--dangerously-skip-permissions` mode.
 - Before any git operation that may discard local changes, detect a dirty tree, warn clearly, and stop unless the user has explicitly approved how to preserve or discard the work.
-- On this machine, Hiddify VPN is a required security control. Do not disable or bypass it. Work around it with routing, proxy settings, or split-tunnel configuration instead.
