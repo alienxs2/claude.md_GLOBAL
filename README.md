@@ -246,16 +246,6 @@ There is no public automated pipeline for global `CLAUDE.md` evaluation as of Ap
 
 Same methodology [Arize](https://arize.com/blog/claude-md-best-practices/) automated for project-level rules.
 
-### Provenance
-
-The file was assembled through several rounds of expert critique (four rounds of back-and-forth between two assistants plus edits by the author). Key decisions:
-
-- `Language → Communication → Workflow → Red Lines` structure — after debate, alternatives with expert personas and a four-section "engineering mindset" layout were rejected.
-- Force-push hardened from "stop and confirm" to absolute ban on protected branches.
-- Dirty tree — auto-stash rejected in favor of detect/warn/stop.
-- Splitting minimal-diff and match-style onto two lines — recognized as two distinct cognitive rules.
-- One machine-specific red line (VPN pinning) was originally kept by name in the author's working copy, then removed from the published template because it was only meaningful on the author's machine. Named machine-specific guardrails remain a valid pattern for your own copy.
-
 ---
 
 ## Русский
@@ -497,16 +487,6 @@ curl -o ~/.claude/CLAUDE.md \
 3. Сравнить: длину ответов (в токенах), количество уточняющих вопросов, субъективное качество.
 
 Это та же методология, которую [Arize](https://arize.com/blog/claude-md-best-practices/) автоматизировали для проектных правил.
-
-### История файла
-
-Файл собран через несколько итераций экспертной критики (четыре раунда согласования между двумя ассистентами плюс правки автора). Ключевые решения:
-
-- Структура `Language → Communication → Workflow → Red Lines` — после обсуждения отвергнуты альтернативы с экспертными персонами и 4-секционной «engineering mindset» структурой.
-- Force-push ужесточён с «stop and confirm» до абсолютного запрета.
-- Dirty tree — отвергнут auto-stash в пользу detect/warn/stop.
-- Разделение minimal-diff и match-style на две строки — признано, что это два разных когнитивных правила.
-- Одно machine-specific red line (pinning VPN) изначально было в рабочей копии автора под конкретным именем, но убрано из публикуемого шаблона, потому что имело смысл только на машине автора. Именованные machine-specific guardrails — остаются валидным паттерном для вашей собственной копии.
 
 ---
 
