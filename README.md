@@ -67,14 +67,14 @@ Effect size is small for high-resource languages (Russian, German, French, Japan
 ```
 Answer first, caveats after. Kills preamble patterns like "Before answering, it's important to note...".
 
-*Research: [Lost in the Middle (Liu et al., 2023)](https://arxiv.org/abs/2307.03172) finds a U-shaped position bias — content at the very beginning or end of a long context is recalled best, middle positions worst. An answer placed first claims the primacy slot; a three-sentence preamble forfeits it.*
+*Research: [Positional Biases Shift (Veseli et al., 2025)](https://arxiv.org/abs/2508.07479) finds a U-shaped position bias — content at the very beginning or end of a long context is recalled best, middle positions worst. An answer placed first claims the primacy slot; a three-sentence preamble forfeits it.*
 
 ```
 - Name trade-offs in one line each and pick a default.
 ```
 Not a lecture with three options for the user to choose from — `A vs B: A is cheaper, B is safer — taking B`. Forces a decision.
 
-*Research: [Sharma et al., 2023 (Anthropic, ICLR 2024)](https://arxiv.org/abs/2310.13548) shows RLHF-trained assistants systematically prefer responses that match perceived user views over more accurate ones — "sycophancy." Demanding a named default counters the default behavior of presenting options without committing.*
+*Research: [SycEval (Fanous et al., Stanford, 2025)](https://arxiv.org/abs/2502.08177) shows RLHF-trained assistants systematically prefer responses that match perceived user views over more accurate ones — "sycophancy." Demanding a named default counters the default behavior of presenting options without committing.*
 
 ```
 - If unsure, say what would make you sure (file to read, command to run)
@@ -82,7 +82,7 @@ Not a lecture with three options for the user to choose from — `A vs B: A is c
 ```
 Instead of "maybe," "possibly" — a concrete path to certainty. Works in both interactive and autonomous modes: in autonomous mode, the agent goes and reads/runs on its own.
 
-*Research: [ReAct (Yao et al., ICLR 2023)](https://arxiv.org/abs/2210.03629) establishes that interleaving reasoning traces with environment-grounded actions (reads, tool calls) substantially outperforms pure-reasoning baselines on knowledge-intensive tasks. "What would make you sure" names the next grounding action instead of hedging.*
+*Research: [ReflAct (Kim et al., 2025)](https://arxiv.org/abs/2505.15182) establishes that interleaving reasoning traces with environment-grounded actions (reads, tool calls) substantially outperforms pure-reasoning baselines on knowledge-intensive tasks. "What would make you sure" names the next grounding action instead of hedging.*
 
 ```
 - When an instruction is materially ambiguous, state the assumption
@@ -90,14 +90,14 @@ Instead of "maybe," "possibly" — a concrete path to certainty. Works in both i
 ```
 Declaring assumptions for *materially* ambiguous instructions. The word `materially` is important: it filters out micro-noise. `then continue` is equally important: this is NOT a blanket "stop and ask" — which paralyses autonomous agents.
 
-*Research: [Sharma et al., 2023](https://arxiv.org/abs/2310.13548) also documents assistants generating unnecessary clarifying questions on answerable queries. Surfacing the assumption and continuing avoids that sycophantic stall while preserving an audit trail the user can correct.*
+*Research: [SycEval (Fanous et al., 2025)](https://arxiv.org/abs/2502.08177) also documents assistants generating unnecessary clarifying questions on answerable queries. Surfacing the assumption and continuing avoids that sycophantic stall while preserving an audit trail the user can correct.*
 
 ```
 - No "As an AI..." preambles, no motivational closers, no emoji.
 ```
 Short list of concrete anti-patterns the model drifts into by default. Negative phrasing is shorter and more precise than its positive equivalent here.
 
-*Research: [Sharma et al., 2023](https://arxiv.org/abs/2310.13548) and [Discovering Language Model Behaviors with Model-Written Evaluations (Perez et al., 2022)](https://arxiv.org/abs/2212.09251) identify "As an AI…" disclaimers and affirming closers as learned RLHF artifacts — persona tics, not information.*
+*Research: [SycEval (Fanous et al., 2025)](https://arxiv.org/abs/2502.08177) and [Persona Vectors (Chen et al., Anthropic, 2025)](https://arxiv.org/abs/2507.21509) identify "As an AI…" disclaimers and affirming closers as learned RLHF artifacts — persona tics, not information.*
 
 #### `## Workflow`
 
@@ -107,7 +107,7 @@ Verify against an explicit success criterion.**
 ```
 Summary anchor. Three principles of the section in one dense line. `explicit`, not `clear`: the criterion must be *named*, not merely understood.
 
-*Research: same primacy effect from [Lost in the Middle (Liu et al., 2023)](https://arxiv.org/abs/2307.03172) — a bold single line at the top of a section is the strongest retention position within that section.*
+*Research: same primacy effect from [Positional Biases Shift (Veseli et al., 2025)](https://arxiv.org/abs/2508.07479) — a bold single line at the top of a section is the strongest retention position within that section.*
 
 ```
 - Plan briefly before multi-file edits; skip the plan for single-file
@@ -115,7 +115,7 @@ Summary anchor. Three principles of the section in one dense line. `explicit`, n
 ```
 Plan only when planning pays for itself. A trivial single-file edit doesn't need a 3-step plan — that's pure overhead.
 
-*Research: [Chain-of-Thought (Wei et al., NeurIPS 2022)](https://arxiv.org/abs/2201.11903) and [Plan-and-Solve (Wang et al., ACL 2023)](https://arxiv.org/abs/2305.04091) show explicit decomposition improves multi-step reasoning. The same CoT paper reports gains are near-zero on trivial tasks and can actively hurt — hence "only when needed."*
+*Research: [Stop When Enough (Sun et al., 2025)](https://arxiv.org/abs/2510.10103) finds chain-of-thought reasoning helps on complex multi-step tasks but has diminishing returns on simpler ones — longer reasoning chains can actively degrade performance when unneeded, hence "only when needed."*
 
 ```
 - Before a multi-step change, name the success criterion (test, command,
@@ -123,7 +123,7 @@ Plan only when planning pays for itself. A trivial single-file edit doesn't need
 ```
 The key line. The task is translated into a verifiable termination criterion *before* work starts. This isn't "goal-driven execution" as a decoration — it's what prevents the agent from either stopping early or drifting into over-engineering.
 
-*Research: [Let's Verify Step by Step (Lightman et al., OpenAI, 2023)](https://arxiv.org/abs/2305.20050) shows process supervision — verifying each intermediate step against an explicit criterion — substantially outperforms outcome-only supervision on MATH. A named success criterion is the agent-level analogue: a checkable signal at every step, not only at the end.*
+*Research: [Process Reward Models That Think (Khalifa et al., 2025)](https://arxiv.org/abs/2504.16828) extends process supervision — verifying each intermediate step against an explicit criterion — with verifier chains-of-thought that outperform outcome-only supervision on challenging reasoning benchmarks. A named success criterion is the agent-level analogue: a checkable signal at every step, not only at the end.*
 
 ```
 - Prefer running local read-only checks (tests, linters, type-checks, builds)
@@ -133,7 +133,7 @@ The key line. The task is translated into a verifiable termination criterion *be
 ```
 Autonomy in the safe zone, confirmation for side-effects. `Prefer running` rather than `Run` — to avoid forcing expensive read-only checks when they aren't warranted. The second half is hard: deploys/migrations/force-push without confirmation, never.
 
-*Research: [ReAct (Yao et al., ICLR 2023)](https://arxiv.org/abs/2210.03629) — reasoning grounded in real environment signals (type-check output, test results) beats reasoning against asked-for user claims. The side-effect boundary is supported by the agent-safety findings cited below on Red Lines.*
+*Research: [ReflAct (Kim et al., 2025)](https://arxiv.org/abs/2505.15182) — reasoning grounded in real environment signals (type-check output, test results) beats reasoning against asked-for user claims. The side-effect boundary is supported by the agent-safety findings cited below on Red Lines.*
 
 ```
 - Prefer the minimal diff. Unrelated issues go in a list at the end,
@@ -141,7 +141,7 @@ Autonomy in the safe zone, confirmation for side-effects. `Prefer running` rathe
 ```
 Diff size discipline. Everything "while I'm here" goes into a postscript to the response, not into the code.
 
-*Research: [Lost in the Middle (Liu et al., 2023)](https://arxiv.org/abs/2307.03172) — review-relevance is a long-context attention problem: every unrelated hunk dilutes attention over the hunks that matter. Smaller diffs are not just ergonomic for humans; they are easier for the reviewer model to attend to correctly.*
+*Research: [Positional Biases Shift (Veseli et al., 2025)](https://arxiv.org/abs/2508.07479) — review-relevance is a long-context attention problem: every unrelated hunk dilutes attention over the hunks that matter. Smaller diffs are not just ergonomic for humans; they are easier for the reviewer model to attend to correctly.*
 
 ```
 - Match the surrounding file's style even if you would write it differently.
@@ -149,7 +149,7 @@ Diff size discipline. Everything "while I'm here" goes into a postscript to the 
 ```
 Style discipline. Agents commonly violate this: they make a technically correct but culturally foreign edit. This rule is separated from "minimal diff" because these are two different cognitive questions: *what* to change vs *how* to change it.
 
-*Research: [In-context learning (Brown et al., NeurIPS 2020, GPT-3)](https://arxiv.org/abs/2005.14165) — LLMs complete patterns from surrounding context. A style-inconsistent edit breaks the local pattern and makes the next completion from the same file less predictable.*
+*Research: [Is In-Context Learning Learning? (de Wynter, 2025)](https://arxiv.org/abs/2509.10414) — LLMs complete patterns from surrounding context. A style-inconsistent edit breaks the local pattern and makes the next completion from the same file less predictable.*
 
 ```
 - Avoid abstractions for single-use code and avoid speculative flexibility
@@ -166,13 +166,13 @@ Anti-over-engineering. Three similar lines beat a premature abstraction. Configu
 ```
 Root causes, not bypasses. The concrete list of anti-patterns (`broad try/except`, silent fallbacks, `--no-verify`) makes the rule actionable — without a list, the agent takes the path of least resistance anyway.
 
-*Research: [Shortcut Learning in Deep Neural Networks (Geirhos et al., Nature Machine Intelligence 2020)](https://www.nature.com/articles/s42256-020-00257-z) — neural networks systematically prefer surface-level shortcuts that satisfy the immediate signal without solving the underlying problem. `--no-verify`, broad `except`, and silent fallbacks are the prompt-level analogues. Named anti-patterns close specific shortcut surfaces.*
+*Research: [Spurious Correlations and Beyond (Sakib et al., ACL 2025)](https://arxiv.org/abs/2506.00134) — neural networks systematically prefer surface-level shortcuts that satisfy the immediate signal without solving the underlying problem. `--no-verify`, broad `except`, and silent fallbacks are the prompt-level analogues. Named anti-patterns close specific shortcut surfaces.*
 
 #### `## Red Lines (always enforce, even when asked casually)`
 
 The section heading matters: "even when asked casually" covers the case where the user requests a destructive action offhand — the model must not read that as the guardrail being lifted.
 
-*Research: [Sharma et al., 2023](https://arxiv.org/abs/2310.13548) shows sycophantic compliance rises under casual, confident, or pressure-framed user requests. This clause explicitly removes that affordance on guardrails.*
+*Research: [SycEval (Fanous et al., 2025)](https://arxiv.org/abs/2502.08177) shows sycophantic compliance rises under casual, confident, or pressure-framed user requests. This clause explicitly removes that affordance on guardrails.*
 
 ```
 - Never use `git push --force` or `--force-with-lease` on `main`, `master`,
@@ -309,14 +309,14 @@ Claude Code читает `CLAUDE.md` двух уровней:
 ```
 Сначала ответ, потом оговорки. Убивает преамбулы и хедж-паттерны вида «Прежде чем отвечать, важно отметить...».
 
-*Research: [Lost in the Middle (Liu et al., 2023)](https://arxiv.org/abs/2307.03172) — U-образный bias позиции: контент в самом начале и в самом конце длинного контекста удерживается лучше всего, середина — хуже. Ответ первой строкой занимает primacy-слот; трёхстрочная преамбула его теряет.*
+*Research: [Positional Biases Shift (Veseli et al., 2025)](https://arxiv.org/abs/2508.07479) — U-образный bias позиции: контент в самом начале и в самом конце длинного контекста удерживается лучше всего, середина — хуже. Ответ первой строкой занимает primacy-слот; трёхстрочная преамбула его теряет.*
 
 ```
 - Name trade-offs in one line each and pick a default.
 ```
 Не лекция с тремя вариантами на выбор пользователю, а «A vs B: A дешевле, B надёжнее — беру B». Форсирует принятие решения.
 
-*Research: [Sharma et al., 2023 (Anthropic, ICLR 2024)](https://arxiv.org/abs/2310.13548) показывает, что RLHF-обученные ассистенты систематически выдают ответы, согласующиеся с предполагаемым взглядом пользователя, а не более точные — «sycophancy». Требование именованного default противоречит дефолтному поведению «предложить варианты, не коммитясь».*
+*Research: [SycEval (Fanous et al., Stanford, 2025)](https://arxiv.org/abs/2502.08177) показывает, что RLHF-обученные ассистенты систематически выдают ответы, согласующиеся с предполагаемым взглядом пользователя, а не более точные — «sycophancy». Требование именованного default противоречит дефолтному поведению «предложить варианты, не коммитясь».*
 
 ```
 - If unsure, say what would make you sure (file to read, command to run)
@@ -324,7 +324,7 @@ Claude Code читает `CLAUDE.md` двух уровней:
 ```
 Вместо «возможно», «вероятно» — конкретный путь к уверенности. Работает и в интерактивных, и в автономных сценариях: в автоматическом режиме модель идёт и читает/запускает сама.
 
-*Research: [ReAct (Yao et al., ICLR 2023)](https://arxiv.org/abs/2210.03629) показывает, что чередование рассуждений с действиями в окружении (reads, tool calls) существенно сильнее чистого рассуждения на knowledge-intensive задачах. «What would make you sure» именует следующее grounding-действие вместо хеджа.*
+*Research: [ReflAct (Kim et al., 2025)](https://arxiv.org/abs/2505.15182) показывает, что чередование рассуждений с действиями в окружении (reads, tool calls) существенно сильнее чистого рассуждения на knowledge-intensive задачах. «What would make you sure» именует следующее grounding-действие вместо хеджа.*
 
 ```
 - When an instruction is materially ambiguous, state the assumption
@@ -332,14 +332,14 @@ Claude Code читает `CLAUDE.md` двух уровней:
 ```
 Декларирование допущений при **материально** неоднозначных инструкциях. Слово `materially` важно: отсекает шум на микро-мелочах. `then continue` — столь же важно: это НЕ blanket «stop and ask», которое парализует автономного агента.
 
-*Research: [Sharma et al., 2023](https://arxiv.org/abs/2310.13548) также документирует, что ассистенты генерируют лишние уточняющие вопросы на вполне отвечаемых запросах. Озвучить допущение и продолжить — способ избежать этого «sycophantic stall», не теряя audit trail, который пользователь может поправить.*
+*Research: [SycEval (Fanous et al., 2025)](https://arxiv.org/abs/2502.08177) также документирует, что ассистенты генерируют лишние уточняющие вопросы на вполне отвечаемых запросах. Озвучить допущение и продолжить — способ избежать этого «sycophantic stall», не теряя audit trail, который пользователь может поправить.*
 
 ```
 - No "As an AI..." preambles, no motivational closers, no emoji.
 ```
 Короткий список конкретных антипаттернов, которые модель любит по инерции. Запретная форма здесь короче и точнее позитивного эквивалента.
 
-*Research: [Sharma et al., 2023](https://arxiv.org/abs/2310.13548) и [Discovering Language Model Behaviors with Model-Written Evaluations (Perez et al., 2022)](https://arxiv.org/abs/2212.09251) идентифицируют «As an AI…»-дисклеймеры и motivational closers как выученные RLHF-артефакты — persona tics, а не информация.*
+*Research: [SycEval (Fanous et al., 2025)](https://arxiv.org/abs/2502.08177) и [Persona Vectors (Chen et al., Anthropic, 2025)](https://arxiv.org/abs/2507.21509) идентифицируют «As an AI…»-дисклеймеры и motivational closers как выученные RLHF-артефакты — persona tics, а не информация.*
 
 #### `## Workflow`
 
@@ -349,7 +349,7 @@ Verify against an explicit success criterion.**
 ```
 Summary-якорь. Три принципа секции одной плотной строкой. `explicit`, а не `clear`: критерий должен быть **названным**, а не просто понятным.
 
-*Research: тот же primacy-эффект из [Lost in the Middle (Liu et al., 2023)](https://arxiv.org/abs/2307.03172) — жирная одна строка в начале секции занимает сильнейшую retention-позицию внутри этой секции.*
+*Research: тот же primacy-эффект из [Positional Biases Shift (Veseli et al., 2025)](https://arxiv.org/abs/2508.07479) — жирная одна строка в начале секции занимает сильнейшую retention-позицию внутри этой секции.*
 
 ```
 - Plan briefly before multi-file edits; skip the plan for single-file
@@ -357,7 +357,7 @@ Summary-якорь. Три принципа секции одной плотно
 ```
 План только когда он окупается. Тривиальная однофайловая правка не требует трёх-пунктового плана — это лишний overhead.
 
-*Research: [Chain-of-Thought (Wei et al., NeurIPS 2022)](https://arxiv.org/abs/2201.11903) и [Plan-and-Solve (Wang et al., ACL 2023)](https://arxiv.org/abs/2305.04091) показывают, что явная декомпозиция улучшает многошаговое рассуждение. Но та же CoT-работа фиксирует около-нулевой выигрыш на тривиальных задачах и возможное ухудшение — отсюда «only when needed».*
+*Research: [Stop When Enough (Sun et al., 2025)](https://arxiv.org/abs/2510.10103) фиксирует: chain-of-thought помогает на сложных многошаговых задачах, но на простых отдача убывающая — длинные цепочки рассуждений могут активно ухудшать результат, если не нужны, — отсюда «only when needed».*
 
 ```
 - Before a multi-step change, name the success criterion (test, command,
@@ -365,7 +365,7 @@ Summary-якорь. Три принципа секции одной плотно
 ```
 Ключевая строка. Задача переводится в проверяемый критерий завершения до того, как начата работа. Это не «goal-driven execution» как декорация — это то, без чего агент не знает, когда остановиться.
 
-*Research: [Let's Verify Step by Step (Lightman et al., OpenAI, 2023)](https://arxiv.org/abs/2305.20050) показывает, что process supervision — верификация каждого промежуточного шага по явному критерию — существенно сильнее outcome-only supervision на MATH. Именованный success criterion — агентный аналог: проверяемый сигнал на каждом шаге, а не только в конце.*
+*Research: [Process Reward Models That Think (Khalifa et al., 2025)](https://arxiv.org/abs/2504.16828) расширяет process supervision — верификацию каждого промежуточного шага по явному критерию — верификаторными chain-of-thought, которые превосходят outcome-only supervision на сложных бенчмарках рассуждений. Именованный success criterion — агентный аналог: проверяемый сигнал на каждом шаге, а не только в конце.*
 
 ```
 - Prefer running local read-only checks (tests, linters, type-checks, builds)
@@ -375,7 +375,7 @@ Summary-якорь. Три принципа секции одной плотно
 ```
 Автономия в безопасной зоне, подтверждение на side-effects. `Prefer running`, а не `Run`, — чтобы не заставлять агента прогонять дорогие проверки там, где это неуместно. Вторая половина — жёстко: deploys/migrations/force-push без подтверждения никогда.
 
-*Research: [ReAct (Yao et al., ICLR 2023)](https://arxiv.org/abs/2210.03629) — рассуждения, заземлённые на реальные сигналы окружения (type-check output, test results), сильнее рассуждений поверх утверждений пользователя. Граница side-effects обоснована через agent-safety исследования ниже в Red Lines.*
+*Research: [ReflAct (Kim et al., 2025)](https://arxiv.org/abs/2505.15182) — рассуждения, заземлённые на реальные сигналы окружения (type-check output, test results), сильнее рассуждений поверх утверждений пользователя. Граница side-effects обоснована через agent-safety исследования ниже в Red Lines.*
 
 ```
 - Prefer the minimal diff. Unrelated issues go in a list at the end,
@@ -383,7 +383,7 @@ Summary-якорь. Три принципа секции одной плотно
 ```
 Дисциплина объёма диффа. Всё, что «раз уж я тут», — в постscriptum к ответу, не в код.
 
-*Research: [Lost in the Middle (Liu et al., 2023)](https://arxiv.org/abs/2307.03172) — review-релевантность это long-context attention problem: каждый посторонний hunk разбавляет внимание на тех hunk'ах, которые важны. Меньший дифф не только эргономичнее людям — он легче корректно attended-to reviewer-моделью.*
+*Research: [Positional Biases Shift (Veseli et al., 2025)](https://arxiv.org/abs/2508.07479) — review-релевантность это long-context attention problem: каждый посторонний hunk разбавляет внимание на тех hunk'ах, которые важны. Меньший дифф не только эргономичнее людям — он легче корректно attended-to reviewer-моделью.*
 
 ```
 - Match the surrounding file's style even if you would write it differently.
@@ -391,7 +391,7 @@ Summary-якорь. Три принципа секции одной плотно
 ```
 Дисциплина стиля. Агенты массово нарушают это: делают технически правильную правку, но культурно инородную. Правило разнесено от «minimal diff» потому, что это два разных когнитивных вопроса: «что менять» и «как менять».
 
-*Research: [In-context learning (Brown et al., NeurIPS 2020, GPT-3)](https://arxiv.org/abs/2005.14165) — LLM достраивают паттерны из окружающего контекста. Style-inconsistent правка ломает локальный паттерн и делает следующую правку из того же файла менее предсказуемой.*
+*Research: [Is In-Context Learning Learning? (de Wynter, 2025)](https://arxiv.org/abs/2509.10414) — LLM достраивают паттерны из окружающего контекста. Style-inconsistent правка ломает локальный паттерн и делает следующую правку из того же файла менее предсказуемой.*
 
 ```
 - Avoid abstractions for single-use code and avoid speculative flexibility
@@ -408,13 +408,13 @@ Summary-якорь. Три принципа секции одной плотно
 ```
 Корневые причины, а не обход. Конкретный список анти-паттернов (`broad try/except`, silent fallbacks, `--no-verify`) делает правило исполнимым: без списка агент всё равно пойдёт по пути наименьшего сопротивления.
 
-*Research: [Shortcut Learning in Deep Neural Networks (Geirhos et al., Nature Machine Intelligence 2020)](https://www.nature.com/articles/s42256-020-00257-z) — нейросети систематически предпочитают surface-level shortcuts, удовлетворяющие ближайший сигнал без решения корневой проблемы. `--no-verify`, широкий `except`, silent fallback — prompt-уровневые аналоги. Именованные антипаттерны закрывают конкретные shortcut-поверхности.*
+*Research: [Spurious Correlations and Beyond (Sakib et al., ACL 2025)](https://arxiv.org/abs/2506.00134) — нейросети систематически предпочитают surface-level shortcuts, удовлетворяющие ближайший сигнал без решения корневой проблемы. `--no-verify`, широкий `except`, silent fallback — prompt-уровневые аналоги. Именованные антипаттерны закрывают конкретные shortcut-поверхности.*
 
 #### `## Red Lines (always enforce, even when asked casually)`
 
 Заголовок секции важен: «even when asked casually» закрывает случаи, когда пользователь просит destructive-действие мимоходом — модель не должна воспринимать это как снятие guardrail.
 
-*Research: [Sharma et al., 2023](https://arxiv.org/abs/2310.13548) показывает, что sycophantic compliance растёт при casual/confident/pressure-формулировках. Эта фраза явно убирает такой affordance с guardrails.*
+*Research: [SycEval (Fanous et al., 2025)](https://arxiv.org/abs/2502.08177) показывает, что sycophantic compliance растёт при casual/confident/pressure-формулировках. Эта фраза явно убирает такой affordance с guardrails.*
 
 ```
 - Never use `git push --force` or `--force-with-lease` on `main`, `master`,
@@ -503,16 +503,15 @@ curl -o ~/.claude/CLAUDE.md \
 
 **Model behavior / Поведение моделей**
 
-- [Language Models are Few-Shot Learners (GPT-3)](https://arxiv.org/abs/2005.14165) — Brown et al., NeurIPS 2020. In-context learning.
-- [Chain-of-Thought Prompting Elicits Reasoning in Large Language Models](https://arxiv.org/abs/2201.11903) — Wei et al., NeurIPS 2022.
-- [Discovering Language Model Behaviors with Model-Written Evaluations](https://arxiv.org/abs/2212.09251) — Perez et al., 2022.
-- [ReAct: Synergizing Reasoning and Acting in Language Models](https://arxiv.org/abs/2210.03629) — Yao et al., ICLR 2023.
-- [Plan-and-Solve Prompting](https://arxiv.org/abs/2305.04091) — Wang et al., ACL 2023.
-- [Let's Verify Step by Step](https://arxiv.org/abs/2305.20050) — Lightman et al., OpenAI, 2023. Process supervision.
-- [Lost in the Middle: How Language Models Use Long Contexts](https://arxiv.org/abs/2307.03172) — Liu et al., TACL 2024. U-shaped position bias.
-- [Towards Understanding Sycophancy in Language Models](https://arxiv.org/abs/2310.13548) — Sharma et al., Anthropic, ICLR 2024.
+- [Is In-Context Learning Learning?](https://arxiv.org/abs/2509.10414) — de Wynter, 2025. Pattern completion as in-context learning.
+- [Stop When Enough: Adaptive Early-Stopping for Chain-of-Thought Reasoning](https://arxiv.org/abs/2510.10103) — Sun et al., 2025.
+- [Persona Vectors: Monitoring and Controlling Character Traits in Language Models](https://arxiv.org/abs/2507.21509) — Chen et al., Anthropic, 2025.
+- [ReflAct: World-Grounded Decision Making in LLM Agents via Goal-State Reflection](https://arxiv.org/abs/2505.15182) — Kim et al., 2025.
+- [Process Reward Models That Think](https://arxiv.org/abs/2504.16828) — Khalifa et al., 2025. Process supervision with verifier chains-of-thought.
+- [Positional Biases Shift as Inputs Approach Context Window Limits](https://arxiv.org/abs/2508.07479) — Veseli et al., 2025. Primacy/recency position bias.
+- [SycEval: Evaluating LLM Sycophancy](https://arxiv.org/abs/2502.08177) — Fanous et al., Stanford, 2025.
 - [PRISM: Position, Role, and Instruction Sensitivity Metric](https://arxiv.org/abs/2502.04794) — Hu et al., 2026. Persona effects.
-- [Shortcut Learning in Deep Neural Networks](https://www.nature.com/articles/s42256-020-00257-z) — Geirhos et al., Nature Machine Intelligence 2020.
+- [Spurious Correlations and Beyond: Understanding and Mitigating Shortcut Learning](https://arxiv.org/abs/2506.00134) — Sakib et al., ACL 2025.
 
 **Agent safety / Безопасность агентов**
 
